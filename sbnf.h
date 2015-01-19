@@ -58,9 +58,16 @@ int foo(int a, int b) {
 
 typedef enum {NodeTypeNode, NodeTypeSeqNode, NodeTypeInputChar} NodeType;
 
+
+typedef struct SeqNode {
+    struct Node * node;
+    struct SeqNode * next;
+} SeqNode;
+
 typedef union NodeContent {
     struct Node * node;
     InputChar * input_char;
+    SeqNode * seq_node;
 } NodeContent;
 
 typedef struct Node {
@@ -68,14 +75,6 @@ typedef struct Node {
     NodeType type;
     char * name;
 } Node;
-
-
-typedef struct SeqNode {
-    NodeContent * content;
-    NodeType type;
-    char * name;
-    struct SeqNode * next;
-} SeqNode;
 
 
 Node * make_node(NodeContent * content, NodeType type) {
@@ -90,8 +89,13 @@ Node * make_node2(void * data, NodeType type) {
     switch (type) {
         case NodeTypeInputChar:
             content->input_char = (InputChar*)data;
+            break;
         case NodeTypeNode:
             content->node = (Node*)data;
+            break;
+        case NodeTypeSeqNode:
+            content->seq_node = (SeqNode*)data;
+            break;
         default: {
         }
     }
@@ -121,4 +125,18 @@ int node_cmp(Node *a, Node *b) {
 Node * node_ic(wchar_t * c, void * payload) {
     return make_node2(ic(c, payload), NodeTypeInputChar);
 }
+
+
+SeqNode * seqnode(Node * node, SeqNode * next) {
+    SeqNode * seq_node = malloc(sizeof(SeqNode));
+    seq_node->node = node;
+    seq_node->next = next;
+    return seq_node;
+}
+
+
+Node * node_seqnode(SeqNode * seq_node) {
+    return make_node2(seq_node, NodeTypeInputChar);
+}
+
 #endif
