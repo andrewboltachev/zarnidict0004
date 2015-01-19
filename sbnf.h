@@ -5,10 +5,10 @@
 #include <string.h>
 #include <wchar.h>
 
-typedef enum {AKChar} AutomatonKind;
+typedef enum {AutomatonTypeChar} AutomatonType;
 
 typedef struct {
-    AutomatonKind kind;
+    AutomatonType type;
     char * name;
     wchar_t * value;
 } Automaton;
@@ -32,8 +32,8 @@ InputChar * ic(wchar_t * value, void * payload) {
 
 Automaton * Char(wchar_t * value, char * name) {
     Automaton * st = malloc(sizeof(Automaton));
-    st->kind = AKChar;
-    st->name = strdup(name);
+    st->type = AutomatonTypeChar;
+    st->name = (name == NULL) ? NULL : strdup(name);
     st->value = wcsdup(value);
     return st;
 }
@@ -47,10 +47,6 @@ typedef union {
 int input_cmp(AutomatonResult * a, AutomatonResult * b) {
     return (a == b);
 };
-
-AutomatonResult * run(Automaton * a, Iterator * it) {
-    return NULL;
-}
 
 int foo(int a, int b) {
     return 4;
@@ -163,6 +159,12 @@ SeqNode * seqnode(Node * node, SeqNode * next) {
 
 Node * node_seqnode(SeqNode * seq_node) {
     return make_node2(seq_node, NodeTypeSeqNode);
+}
+
+// run
+Node * run(Automaton * a, InputChar * it[]) {
+    Node * result = node_ic(L"ӹ", NULL);
+    return result;
 }
 
 #endif

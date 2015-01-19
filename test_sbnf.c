@@ -7,6 +7,7 @@
     printf("%s\n", #fn_name);\
     fn_name();
 
+// TODO: split "create" tests from cmp test?
 void test_input_cmp0001() {
     InputChar * a = ic(L"a", NULL);
     InputChar * b = ic(L"b", NULL);
@@ -141,8 +142,10 @@ void test_input_cmp0007() {
 }
 
 void test_Char() {
-    //char * v = "aaa";
-    //Automaton * g = Char(L"ӹ", v);
+    Automaton * g = Char(L"ӹ", NULL);
+    InputChar * it[] = {ic(L"ӹ", NULL)};
+    Node * n = node_ic(L"ӹ", NULL);
+    assert(1 == node_cmp(run(g, it), n));
 }
 
 int main() {
@@ -153,6 +156,8 @@ int main() {
     run_test(test_input_cmp0005);
     run_test(test_input_cmp0006);
     run_test(test_input_cmp0007);
-    //run_test(test_Char);
+
+    run_test(test_Char);
+
     return 0;
 }
