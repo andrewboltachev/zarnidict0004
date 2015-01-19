@@ -56,7 +56,7 @@ int foo(int a, int b) {
     return 4;
 }
 
-typedef enum {NodeTypeNode, NodeTypeInputChar} NodeType;
+typedef enum {NodeTypeNode, NodeTypeSeqNode, NodeTypeInputChar} NodeType;
 
 typedef union NodeContent {
     struct Node * node;
@@ -67,29 +67,58 @@ typedef struct Node {
     NodeContent * content;
     NodeType type;
     char * name;
-    char * klass;
 } Node;
 
 
-Node * node() {
-    Node * n = malloc(sizeof(Node));
-    return n;
+typedef struct SeqNode {
+    NodeContent * content;
+    NodeType type;
+    char * name;
+    struct SeqNode * next;
+} SeqNode;
+
+
+Node * make_node(NodeContent * content, NodeType type) {
+    Node * node = malloc(sizeof(Node));
+    node->content = content;
+    node->type = type;
+    return node;
+}
+
+Node * make_node2(void * data, NodeType type) {
+    NodeContent * content = malloc(sizeof(NodeContent));
+    switch (type) {
+        case NodeTypeInputChar:
+            content->input_char = (InputChar*)data;
+        case NodeTypeNode:
+            content->node = (Node*)data;
+        default: {
+        }
+    }
+    return make_node(content, type);
+}
+
+Node * node_node(Node *inner_node) {
+    return make_node2(inner_node, NodeTypeNode);
 }
 
 int node_cmp(Node *a, Node *b) {
-    //printf("%p", a->content->input_char);
-    return *(a->content->input_char->value) == *(b->content->input_char->value);
+    if (a->type != b->type) {
+        return 0;
+    } else {
+        switch (a->type) {
+            case NodeTypeInputChar:
+                return *(a->content->input_char->value) == *(b->content->input_char->value);
+            case NodeTypeNode:
+                return node_cmp(a->content->node, b->content->node);
+            default: {
+                return 0;
+            }
+        }
+    }
 }
 
-Node * node_ic(wchar_t * c) {
-    InputChar * input_char = malloc(sizeof(InputChar));
-    input_char->value = c;
-    input_char->payload = NULL;
-    NodeContent * node_content = malloc(sizeof(NodeContent));
-    node_content->input_char = input_char;
-    Node * node = malloc(sizeof(Node));
-    node->content = node_content;
-    node->type = NodeTypeInputChar;
-    return node;
+Node * node_ic(wchar_t * c, void * payload) {
+    return make_node2(ic(c, payload), NodeTypeInputChar);
 }
 #endif
