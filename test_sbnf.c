@@ -109,6 +109,37 @@ void test_input_cmp0004() {
     assert(1 == node_cmp(node_node(node_ic(L"a", NULL)), node_node(node_ic(L"a", NULL))));
 }
 
+void test_input_cmp0005() {
+    Node * a = node_ic(L"a", NULL);
+    Node * b = node_ic(L"b", NULL);
+    Node * c = node_ic(L"c", NULL);
+    Node * d = node_ic(L"d", NULL);
+    assert(1 != node_cmp(
+        node_seqnode(seqnode(a, seqnode(b, seqnode(c, NULL)))),
+        node_seqnode(seqnode(a, seqnode(b, seqnode(d, NULL))))
+    ));
+}
+
+void test_input_cmp0006() {
+    Node * a = node_ic(L"a", NULL);
+    Node * b = node_ic(L"b", NULL);
+    Node * c = node_ic(L"c", NULL);
+    assert(1 == node_cmp(
+        node_seqnode(seqnode(a, seqnode(b, seqnode(c, NULL)))),
+        node_seqnode(seqnode(a, seqnode(b, seqnode(c, NULL))))
+    ));
+}
+
+void test_input_cmp0007() {
+    Node * a = node_ic(L"a", NULL);
+    Node * b = node_ic(L"b", NULL);
+    Node * c = node_ic(L"c", NULL);
+    assert(1 != node_cmp(
+        node_seqnode(seqnode(a, seqnode(b, seqnode(c, NULL)))),
+        node_seqnode(seqnode(a, seqnode(b, NULL)))
+    ));
+}
+
 void test_Char() {
     //char * v = "aaa";
     //Automaton * g = Char(L"ӹ", v);
@@ -119,6 +150,9 @@ int main() {
     run_test(test_input_cmp0002);
     run_test(test_input_cmp0003);
     run_test(test_input_cmp0004);
+    run_test(test_input_cmp0005);
+    run_test(test_input_cmp0006);
+    run_test(test_input_cmp0007);
     //run_test(test_Char);
     return 0;
 }

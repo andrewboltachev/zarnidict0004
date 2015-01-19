@@ -115,12 +115,38 @@ int node_cmp(Node *a, Node *b) {
                 return *(a->content->input_char->value) == *(b->content->input_char->value);
             case NodeTypeNode:
                 return node_cmp(a->content->node, b->content->node);
+            case NodeTypeSeqNode: {
+                SeqNode * this_a = a->content->seq_node;
+                SeqNode * this_b = b->content->seq_node;
+                while (!((this_a == NULL) && (this_b == NULL))) {
+                    if (this_a != this_b) {
+                        if (this_a == NULL || this_b == NULL) {
+                            return 0;
+                        }
+                    }
+                    if (!node_cmp(this_a->node, this_b->node)) {
+                        return 0;
+                    }
+                    this_a = this_a->next;
+                    this_b = this_b->next;
+                }
+                return 1;
+            }
             default: {
                 return 0;
             }
         }
     }
 }
+
+/*int seq_node_len(SeqNode * seq_node) {
+    SeqNode * this_seq_node = seq_node;
+    int l = 0;
+    while (this_seq_node != NULL) {
+        l += 1;
+    }
+    return l;
+}*/
 
 Node * node_ic(wchar_t * c, void * payload) {
     return make_node2(ic(c, payload), NodeTypeInputChar);
@@ -136,7 +162,7 @@ SeqNode * seqnode(Node * node, SeqNode * next) {
 
 
 Node * node_seqnode(SeqNode * seq_node) {
-    return make_node2(seq_node, NodeTypeInputChar);
+    return make_node2(seq_node, NodeTypeSeqNode);
 }
 
 #endif
