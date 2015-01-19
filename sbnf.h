@@ -71,7 +71,7 @@ Node * node() {
 }
 
 int node_cmp(Node *a, Node *b) {
-    return 0;
+    return *(a->content->input_char->value) == *(b->content->input_char->value);
 }
 
 Node * node_ic(wchar_t * c) {
