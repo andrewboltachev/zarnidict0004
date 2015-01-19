@@ -1,3 +1,6 @@
+#ifndef SBNF_H
+#define SBNF_H
+
 #include <stdlib.h>
 #include <string.h>
 #include <wchar.h>
@@ -46,12 +49,14 @@ int input_cmp(AutomatonResult * a, AutomatonResult * b) {
 };
 
 AutomatonResult * run(Automaton * a, Iterator * it) {
-
+    return NULL;
 }
 
 int foo(int a, int b) {
     return 4;
 }
+
+typedef enum {NodeTypeNode, NodeTypeInputChar} NodeType;
 
 typedef union NodeContent {
     struct Node * node;
@@ -60,6 +65,7 @@ typedef union NodeContent {
 
 typedef struct Node {
     NodeContent * content;
+    NodeType type;
     char * name;
     char * klass;
 } Node;
@@ -71,6 +77,7 @@ Node * node() {
 }
 
 int node_cmp(Node *a, Node *b) {
+    //printf("%p", a->content->input_char);
     return *(a->content->input_char->value) == *(b->content->input_char->value);
 }
 
@@ -82,5 +89,7 @@ Node * node_ic(wchar_t * c) {
     node_content->input_char = input_char;
     Node * node = malloc(sizeof(Node));
     node->content = node_content;
+    node->type = NodeTypeInputChar;
     return node;
 }
+#endif
