@@ -155,15 +155,6 @@ int node_cmp(Node *a, Node *b) {
     }
 }
 
-/*int seq_node_len(SeqNode * seq_node) {
-    SeqNode * this_seq_node = seq_node;
-    int l = 0;
-    while (this_seq_node != NULL) {
-        l += 1;
-    }
-    return l;
-}*/
-
 Node * node_ic(wchar_t * c, void * payload) {
     return make_node2(ic(c, payload), NodeTypeInputChar);
 }
