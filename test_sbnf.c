@@ -182,13 +182,32 @@ void test_Seq_0001() {
     Node * aa = node_ic(L"ӓ", NULL);
 
     Node * n = node_seqnode(seqnode(yy, seqnode(aa, NULL)));
-    assert(1 == node_cmp(run(g, it, 2), n));
+    Node * o = run(g, it, 2);
+    print_node(o);
+    print_node(n);
+
+    assert(1 == node_cmp(o, n));
 }
 
 void test_Seq_0002() {
+    Automaton * y = Char(L"ӹ", NULL);
+
+    Automaton * g = Seq(seq_el(y, seq_el(y, NULL)), NULL);
+    InputChar * it[] = {ic(L"ӹ", NULL), ic(L"ӓ", NULL)};
+
+    Node * yy = node_ic(L"ӹ", NULL);
+    Node * aa = node_ic(L"ӓ", NULL);
+
+    Node * n = node_seqnode(seqnode(yy, seqnode(aa, NULL)));
+    Node * o = run(g, it, 2);
+    print_node(o);
+
+    assert(NULL == o);
 }
 
 int main() {
+    setlocale(LC_ALL, "ru_RU.utf8");
+
     run_test(test_input_cmp0001);
     run_test(test_input_cmp0002);
     run_test(test_input_cmp0003);
@@ -203,6 +222,7 @@ int main() {
     run_test(test_Char_0004);
 
     run_test(test_Seq_0001);
+    run_test(test_Seq_0002);
 
     return 0;
 }

@@ -191,7 +191,7 @@ typedef struct {
 } AutomatonResult;
 
 
-AutomatonResult * ar(int index, Node * node) {
+AutomatonResult * make_ar(int index, Node * node) {
     AutomatonResult * ar = malloc(sizeof(AutomatonResult));
     ar->node = node;
     ar->index = index;
@@ -199,29 +199,95 @@ AutomatonResult * ar(int index, Node * node) {
 }
 
 // run
-AutomatonResult * process(Automaton * a, InputChar * it[], int len) {
+AutomatonResult * process(Automaton * a, InputChar * it[], int offset, int len) {
     switch (a->type) {
         case AutomatonTypeChar:
-            if (wcscmp(a->content->char_value, it[0]->value) == 0) {
+            printf("%ls\n", a->content->char_value);
+            if (wcscmp(a->content->char_value, it[offset]->value) == 0) {
                 Node * result = node_ic(a->content->char_value, NULL);
-                return ar(0, result);
+                return make_ar(offset + 1, result);
             } else {
                 return NULL;
             }
-        case AutomatonTypeSeq:
+        case AutomatonTypeSeq: {
+            int i;
+            AutomatonResult * ar;
+            SeqNode * sn = NULL;
             /*printf("%p\n", it);
             printf("%p\n", it + len);
             printf("%zu\n", sizeof(it));*/
             //a->content->seq_value; // SeqEl
-            return NULL;
+            i = 0;
+            SeqEl * current = a->content->seq_value;
+            while (current != NULL) {
+                ar = process((Automaton*)current->value, it, i, len);
+                if (ar == NULL) {
+                    return NULL;
+                }
+                if (sn == NULL) {
+                    sn = seqnode(ar->node, NULL);
+                } else {
+                    sn->next = seqnode(ar->node, NULL);
+                }
+                printf("%d\n", i);
+                i = ar->index;
+                current = (SeqEl*)current->next;
+            }
+            return make_ar(i, node_seqnode(sn));
+        }
     }
 }
 Node * run(Automaton * a, InputChar * it[], int len) {
-    AutomatonResult * ar = process(a, it, len);
+    AutomatonResult * ar = process(a, it, 0, len);
     if (ar == NULL) {
         return NULL;
     } else {
         return ar->node;
     }
+}
+
+void do_print_node(Node * node, int level);
+
+void do_print_seq_node(SeqNode *sn, int level) {
+    do_print_node(sn->node, level);
+    if (sn->next != NULL) {
+        do_print_seq_node(sn->next, level);
+    }
+}
+
+void do_print_node(Node * node, int level) {
+    int i;
+    for (i = 0; i < level; i++) {
+        printf("\t");
+    }
+    if (node == NULL) {
+        printf("NULL\n");
+    } else {
+        switch (node->type) {
+            case NodeTypeNode: {
+                printf("NodeTypeNode");
+                printf("\n");
+                do_print_node(node->content->node, level + 1);
+                break;
+            }
+            case NodeTypeSeqNode: {
+                printf("NodeTypeSeqNode");
+                printf("\n");
+                do_print_seq_node(node->content->seq_node, level + 1);
+                break;
+            }
+            case NodeTypeInputChar: {
+                printf("NodeTypeInputChar");
+                printf(" %ls\n", node->content->input_char->value);
+                break;
+            }
+            default: {
+            }
+        }
+    }
+}
+
+void print_node(Node * node) {
+    do_print_node(node, 0);
 }
 #endif
