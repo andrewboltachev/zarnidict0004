@@ -1,7 +1,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
+#include <locale.h>
+#include <string.h>
+#include <wchar.h>
 #include "sbnf.h"
+
 
 #define run_test(fn_name)\
     printf("%s\n", #fn_name);\
@@ -141,14 +145,30 @@ void test_input_cmp0007() {
     ));
 }
 
-void test_Char() {
+void test_Char_0001() {
     Automaton * g = Char(L"ӹ", NULL);
     InputChar * it[] = {ic(L"ӹ", NULL)};
     Node * n = node_ic(L"ӹ", NULL);
+    printf("%ls\n", L"Ӹдӹр дене рвезе\n");
     assert(1 == node_cmp(run(g, it), n));
 }
 
+void test_Char_0002() {
+    Automaton * g = Char(L"ӱ", NULL);
+    InputChar * it[] = {ic(L"ӱ", NULL)};
+    Node * n = node_ic(L"ӱ", NULL);
+    assert(1 == node_cmp(run(g, it), n));
+}
+
+void test_Char_0003() {
+    Automaton * g = Char(L"ӹ", NULL);
+    InputChar * it[] = {ic(L"ӱ", NULL)};
+    assert(1 == node_cmp(run(g, it), NULL));
+}
+
 int main() {
+    setlocale(LC_ALL, "ru_RU.utf8");
+
     run_test(test_input_cmp0001);
     run_test(test_input_cmp0002);
     run_test(test_input_cmp0003);
@@ -157,7 +177,27 @@ int main() {
     run_test(test_input_cmp0006);
     run_test(test_input_cmp0007);
 
-    run_test(test_Char);
+    run_test(test_Char_0001);
+    run_test(test_Char_0002);
+    run_test(test_Char_0003);
+
+  /*const wchar_t str[] = L"ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы";
+  const wchar_t * p;
+  mbstate_t mbs;
+  char buffer[wcslen(str) * sizeof(wchar_t)];
+  int ret;
+
+    setlocale(LC_ALL, "ru_RU.utf8");
+  memset(&mbs, 0, sizeof(mbs)); // initialize 
+
+
+  mbrlen (NULL,0,&mbs);    // initialize mbs 
+
+  printf ("wchar_t string: %ls \n",str);
+
+  p = str;
+  ret = wcsrtombs ( buffer, &p, sizeof(buffer), &mbs );
+  if (ret) printf ("multibyte string: %s \n",buffer);*/
 
     return 0;
 }

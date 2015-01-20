@@ -103,6 +103,9 @@ Node * node_node(Node *inner_node) {
 }
 
 int node_cmp(Node *a, Node *b) {
+    if (a == NULL || b == NULL) {
+        return (a == b);
+    }
     if (a->type != b->type) {
         return 0;
     } else {
@@ -163,8 +166,12 @@ Node * node_seqnode(SeqNode * seq_node) {
 
 // run
 Node * run(Automaton * a, InputChar * it[]) {
-    Node * result = node_ic(L"ӹ", NULL);
-    return result;
+    if (a->value == it[0]->value) {
+        Node * result = node_ic(a->value, NULL);
+        return result;
+    } else {
+        return NULL;
+    }
 }
 
 #endif
