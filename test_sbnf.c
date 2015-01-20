@@ -171,6 +171,23 @@ void test_Char_0004() {
     assert(1 == node_cmp(run(g, it), NULL));
 }
 
+void test_Seq_0001() {
+    Automaton * y = Char(L"ӹ", NULL);
+    Automaton * a = Char(L"ӓ", NULL);
+
+    Automaton * g = Seq(seq_el(y, seq_el(a, NULL)), NULL);
+    InputChar * it[] = {ic(L"ӹ", NULL), ic(L"ӓ", NULL)};
+
+    Node * yy = node_ic(L"ӹ", NULL);
+    Node * aa = node_ic(L"ӓ", NULL);
+
+    Node * n = node_seqnode(seqnode(yy, seqnode(aa, NULL)));
+    assert(1 == node_cmp(run(g, it), n));
+}
+
+void test_Seq_0002() {
+}
+
 int main() {
     run_test(test_input_cmp0001);
     run_test(test_input_cmp0002);
@@ -184,6 +201,8 @@ int main() {
     run_test(test_Char_0002);
     run_test(test_Char_0003);
     run_test(test_Char_0004);
+
+    run_test(test_Seq_0001);
 
     return 0;
 }

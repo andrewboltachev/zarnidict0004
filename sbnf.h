@@ -7,10 +7,21 @@
 
 typedef enum {AutomatonTypeChar, AutomatonTypeSeq} AutomatonType;
 
+
+typedef struct {
+    struct SeqEl * next;
+    struct Automaton * value;
+} SeqEl;
+
+typedef union {
+    wchar_t * char_value;
+    SeqEl * seq_value;
+} AutomatonContent;
+
 typedef struct {
     AutomatonType type;
     char * name;
-    wchar_t * value;
+    AutomatonContent * content;
 } Automaton;
 
 typedef struct {
@@ -23,11 +34,6 @@ typedef struct {
     int count;
 } Iterator;
 
-typedef struct {
-    struct Seq * next;
-    Automaton * value;
-} Seq;
-
 InputChar * ic(wchar_t * value, void * payload) {
     InputChar * ichar = malloc(sizeof(InputChar));
     ichar->value = value;
@@ -35,24 +41,44 @@ InputChar * ic(wchar_t * value, void * payload) {
     return ichar;
 }
 
+Automaton * make_automaton(AutomatonContent * content, AutomatonType type, char * name) {
+    Automaton * st = malloc(sizeof(Automaton));
+    st->type = type;
+    st->name = (name == NULL) ? NULL : strdup(name);
+    st->content = content;
+    return st;
+}
+
+Automaton * make_automaton2(void * data, AutomatonType type, char * name) {
+    AutomatonContent * ac = malloc(sizeof(AutomatonContent));
+    switch (type) {
+        case AutomatonTypeChar:
+            ac->char_value = (wchar_t*)data;
+        case AutomatonTypeSeq:
+            ac->seq_value = (SeqEl*)data;
+        default: {
+        }
+    }
+    return make_automaton(ac, type, name);
+}
+
 Automaton * Char(wchar_t * value, char * name) {
-    Automaton * st = malloc(sizeof(Automaton));
-    st->type = AutomatonTypeChar;
-    st->name = (name == NULL) ? NULL : strdup(name);
-    st->value = wcsdup(value);
-    return st;
+    return make_automaton2(value, AutomatonTypeChar, name);
 }
 
 
-Seq * seq(Automaton * value, Seq * next, char * name) {
+SeqEl * seq(Automaton * value, SeqEl * next) {
 }
 
-Automaton * a_seq(wchar_t * value, char * name) {
-    Automaton * st = malloc(sizeof(Automaton));
-    st->type = AutomatonTypeChar;
-    st->name = (name == NULL) ? NULL : strdup(name);
-    st->value = wcsdup(value);
-    return st;
+SeqEl * seq_el(Automaton * value, SeqEl * next) {
+    SeqEl * seq_el = malloc(sizeof(SeqEl));
+    seq_el->value = (struct Automaton*)value;
+    seq_el->next = (struct SeqEl*)next;
+    return seq_el;
+}
+
+Automaton * Seq(SeqEl * seq_el, char * name) {
+    return make_automaton2(seq_el, AutomatonTypeSeq, name);
 }
 
 
@@ -174,11 +200,16 @@ Node * node_seqnode(SeqNode * seq_node) {
 
 // run
 Node * run(Automaton * a, InputChar * it[]) {
-    if (wcscmp(a->value, it[0]->value) == 0) {
-        Node * result = node_ic(a->value, NULL);
-        return result;
-    } else {
-        return NULL;
+    switch (a->type) {
+        case AutomatonTypeChar:
+            if (wcscmp(a->content->char_value, it[0]->value) == 0) {
+                Node * result = node_ic(a->content->char_value, NULL);
+                return result;
+            } else {
+                return NULL;
+            }
+        case AutomatonTypeSeq:
+            return NULL;
     }
 }
 
