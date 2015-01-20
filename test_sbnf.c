@@ -146,10 +146,9 @@ void test_input_cmp0007() {
 }
 
 void test_Char_0001() {
-    Automaton * g = Char(L"ӹ", NULL);
-    InputChar * it[] = {ic(L"ӹ", NULL)};
-    Node * n = node_ic(L"ӹ", NULL);
-    printf("%ls\n", L"Ӹдӹр дене рвезе\n");
+    Automaton * g = Char(L"a", NULL);
+    InputChar * it[] = {ic(L"a", NULL)};
+    Node * n = node_ic(L"a", NULL);
     assert(1 == node_cmp(run(g, it), n));
 }
 

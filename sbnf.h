@@ -111,7 +111,7 @@ int node_cmp(Node *a, Node *b) {
     } else {
         switch (a->type) {
             case NodeTypeInputChar:
-                return *(a->content->input_char->value) == *(b->content->input_char->value);
+                return wcscmp(a->content->input_char->value, b->content->input_char->value) == 0;
             case NodeTypeNode:
                 return node_cmp(a->content->node, b->content->node);
             case NodeTypeSeqNode: {
@@ -166,7 +166,7 @@ Node * node_seqnode(SeqNode * seq_node) {
 
 // run
 Node * run(Automaton * a, InputChar * it[]) {
-    if (a->value == it[0]->value) {
+    if (wcscmp(a->value, it[0]->value) == 0) {
         Node * result = node_ic(a->value, NULL);
         return result;
     } else {
