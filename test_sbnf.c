@@ -165,8 +165,14 @@ void test_Char_0003() {
     assert(1 == node_cmp(run(g, it), NULL));
 }
 
+void test_Char_0004() {
+    Automaton * g = Char(L"ӹ", NULL);
+    InputChar * it[] = {ic(L"ӱ", NULL)};
+    assert(1 == node_cmp(run(g, it), NULL));
+}
+
 int main() {
-    setlocale(LC_ALL, "ru_RU.utf8");
+    //setlocale(LC_ALL, "ru_RU.utf8");
 
     run_test(test_input_cmp0001);
     run_test(test_input_cmp0002);
@@ -179,6 +185,7 @@ int main() {
     run_test(test_Char_0001);
     run_test(test_Char_0002);
     run_test(test_Char_0003);
+    run_test(test_Char_0004);
 
   /*const wchar_t str[] = L"ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы ӟичы";
   const wchar_t * p;
@@ -196,7 +203,7 @@ int main() {
 
   p = str;
   ret = wcsrtombs ( buffer, &p, sizeof(buffer), &mbs );
-  if (ret) printf ("multibyte string: %s \n",buffer);*/
+  if (ret) printf ("multibyte string: %s \n",buffer);/**/
 
     return 0;
 }

@@ -5,7 +5,7 @@
 #include <string.h>
 #include <wchar.h>
 
-typedef enum {AutomatonTypeChar} AutomatonType;
+typedef enum {AutomatonTypeChar, AutomatonTypeSeq} AutomatonType;
 
 typedef struct {
     AutomatonType type;
@@ -23,6 +23,11 @@ typedef struct {
     int count;
 } Iterator;
 
+typedef struct {
+    struct Seq * next;
+    Automaton * value;
+} Seq;
+
 InputChar * ic(wchar_t * value, void * payload) {
     InputChar * ichar = malloc(sizeof(InputChar));
     ichar->value = value;
@@ -31,6 +36,18 @@ InputChar * ic(wchar_t * value, void * payload) {
 }
 
 Automaton * Char(wchar_t * value, char * name) {
+    Automaton * st = malloc(sizeof(Automaton));
+    st->type = AutomatonTypeChar;
+    st->name = (name == NULL) ? NULL : strdup(name);
+    st->value = wcsdup(value);
+    return st;
+}
+
+
+Seq * seq(Automaton * value, Seq * next, char * name) {
+}
+
+Automaton * a_seq(wchar_t * value, char * name) {
     Automaton * st = malloc(sizeof(Automaton));
     st->type = AutomatonTypeChar;
     st->name = (name == NULL) ? NULL : strdup(name);
