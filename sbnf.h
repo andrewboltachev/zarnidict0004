@@ -82,19 +82,6 @@ Automaton * Seq(SeqEl * seq_el, char * name) {
 }
 
 
-typedef union {
-    InputChar *input_char;
-} AutomatonResult;
-
-
-int input_cmp(AutomatonResult * a, AutomatonResult * b) {
-    return (a == b);
-};
-
-int foo(int a, int b) {
-    return 4;
-}
-
 typedef enum {NodeTypeNode, NodeTypeSeqNode, NodeTypeInputChar} NodeType;
 
 
@@ -198,19 +185,43 @@ Node * node_seqnode(SeqNode * seq_node) {
     return make_node2(seq_node, NodeTypeSeqNode);
 }
 
+typedef struct {
+    Node * node;
+    int index;
+} AutomatonResult;
+
+
+AutomatonResult * ar(int index, Node * node) {
+    AutomatonResult * ar = malloc(sizeof(AutomatonResult));
+    ar->node = node;
+    ar->index = index;
+    return ar;
+}
+
 // run
-Node * run(Automaton * a, InputChar * it[]) {
+AutomatonResult * process(Automaton * a, InputChar * it[], int len) {
     switch (a->type) {
         case AutomatonTypeChar:
             if (wcscmp(a->content->char_value, it[0]->value) == 0) {
                 Node * result = node_ic(a->content->char_value, NULL);
-                return result;
+                return ar(0, result);
             } else {
                 return NULL;
             }
         case AutomatonTypeSeq:
+            /*printf("%p\n", it);
+            printf("%p\n", it + len);
+            printf("%zu\n", sizeof(it));*/
+            //a->content->seq_value; // SeqEl
             return NULL;
     }
 }
-
+Node * run(Automaton * a, InputChar * it[], int len) {
+    AutomatonResult * ar = process(a, it, len);
+    if (ar == NULL) {
+        return NULL;
+    } else {
+        return ar->node;
+    }
+}
 #endif

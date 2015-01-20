@@ -149,26 +149,26 @@ void test_Char_0001() {
     Automaton * g = Char(L"a", NULL);
     InputChar * it[] = {ic(L"a", NULL)};
     Node * n = node_ic(L"a", NULL);
-    assert(1 == node_cmp(run(g, it), n));
+    assert(1 == node_cmp(run(g, it, 1), n));
 }
 
 void test_Char_0002() {
     Automaton * g = Char(L"ӱ", NULL);
     InputChar * it[] = {ic(L"ӱ", NULL)};
     Node * n = node_ic(L"ӱ", NULL);
-    assert(1 == node_cmp(run(g, it), n));
+    assert(1 == node_cmp(run(g, it, 1), n));
 }
 
 void test_Char_0003() {
     Automaton * g = Char(L"ӹ", NULL);
     InputChar * it[] = {ic(L"ӱ", NULL)};
-    assert(1 == node_cmp(run(g, it), NULL));
+    assert(1 == node_cmp(run(g, it, 1), NULL));
 }
 
 void test_Char_0004() {
     Automaton * g = Char(L"ӹ", NULL);
     InputChar * it[] = {ic(L"ӱ", NULL)};
-    assert(1 == node_cmp(run(g, it), NULL));
+    assert(1 == node_cmp(run(g, it, 1), NULL));
 }
 
 void test_Seq_0001() {
@@ -182,7 +182,7 @@ void test_Seq_0001() {
     Node * aa = node_ic(L"ӓ", NULL);
 
     Node * n = node_seqnode(seqnode(yy, seqnode(aa, NULL)));
-    assert(1 == node_cmp(run(g, it), n));
+    assert(1 == node_cmp(run(g, it, 2), n));
 }
 
 void test_Seq_0002() {
